@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SampleMovieApi.Services;
 
 namespace SampleMovieApi.Controllers
 {
@@ -12,23 +14,27 @@ namespace SampleMovieApi.Controllers
     public class MoviesController : ControllerBase
     {
         private readonly ILogger<MoviesController> _logger;
+        private readonly IMovieService _movieService;
 
-        public MoviesController(ILogger<MoviesController> logger)
+        public MoviesController(ILogger<MoviesController> logger, IMovieService movieService)
         {
             _logger = logger;
+            _movieService = movieService;
         }
 
         [HttpGet]
-        public IEnumerable<string> Get()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> Get()
         {
-            return new string[] { "value1", "value2" };
+            return Ok();
         }
 
         [Route("[action]")]
         [HttpGet]
-        public IEnumerable<string> Stats()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> Stats()
         {
-            return new string[] { "value3", "value4" };
+            return Ok(new string[] { "value3", "value4" });
         }
     }
 }
