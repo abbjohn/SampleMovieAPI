@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SampleMovieApi.Models;
 using SampleMovieApi.Services;
 
 namespace SampleMovieApi.Controllers
@@ -22,19 +21,28 @@ namespace SampleMovieApi.Controllers
             _movieService = movieService;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{movieId}", Name = "GetMovieMetadata")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> Get(int movieId)
         {
-            return Ok("value");
+            var metaData = await _movieService.GetMetaDataByMovieIdAsync(movieId);
+
+            if (metaData == null || metaData.Count == 0)
+            {
+                return NotFound();
+            }
+
+            return Ok(metaData);
         }
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<IActionResult> Post([FromBody] string metadata)
+        public async Task<IActionResult> Post(MetaDataModel metadata)
         {
-            return Ok();
+            var newMovie = await _movieService.AddMetaData(metadata);
+
+            return CreatedAtRoute("GetMovieMetadata", new { movieId = newMovie.MovieId.Value }, newMovie);
         }
     }
 }

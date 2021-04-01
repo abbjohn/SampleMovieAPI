@@ -34,7 +34,9 @@ namespace SampleMovieApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Stats()
         {
-            return Ok(new string[] { "value3", "value4" });
+            var stats = await _movieService.GetMovieStats();
+
+            return Ok(stats);
         }
     }
 }
